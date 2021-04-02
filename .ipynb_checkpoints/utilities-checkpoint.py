@@ -55,3 +55,13 @@ def make_data(docs):
     Nd=list(map(len,docs))
     M,V=len(docs),len(vocab)
     return (vocab,word_dicts,Nd,M,V)
+
+def loglik(alpha,gamma_list,M,k):
+    """
+    Calculate $L_{[\alpha]}$ defined in A.4.2
+    """
+    psi_sum_gamma=np.array(list(map(lambda x: psi(np.sum(x)),gamma_list))).reshape((M,1)) # M*1 
+    psi_gamma=psi(np.array(gamma_list)) # M*k matrix
+    L=M*gammaln(np.sum(alpha)-np.sum(gammaln(alpha)))+np.sum((psi_gamma-psi_sum_gamma)*(alpha.reshape((1,k))-1))
+    return L
+    
