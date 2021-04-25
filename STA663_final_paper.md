@@ -28,7 +28,7 @@ where $z_n$ is the *topic* of word $w_n$, $\beta$ is a $k\times V$ matrix with $
 
 For a corpus with $M$ documents where document $d$ has $N_d$ words, the LDA model assumes that the documents are independently generated from the above process. Figure 1 shows a graphical model representation of LDA. 
 
-![image-20210420170137277](/Users/zhuoqunwang/Library/Application Support/typora-user-images/image-20210420170137277.png)
+![image-20210420170137277](./figures/fig1.png)
 
 Figure 1. A graphical model representation of LDA
 
