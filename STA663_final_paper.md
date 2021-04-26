@@ -103,13 +103,29 @@ The method `fit_lda` in `wrapper1` is implemented in plain python, whose perform
 - Cython
 - ...
 
+### Comparative Analysis
+We conducted comparative analysis with competing methods to evaluate the performance of LDA in feature extraction for document classification as well as the speed of our two implementations of LDA. 
+#### Document classification 
+We conducted a binary classification experiment using the Reuters-21578 dataset. We focused on a randomly sampled subset of this dataset with 1000 documents for illustration purpose. We estimated the $\gamma^*$ parameter of a 20-topic LDA model on the 1000 documents without reference to the true class label, and use $\gamma^*$ as the reduced feature set. We trained a support vector machine (SVM) for binary classification of the documents with these reduced features. We compare the classification accuracy with an SVM trained on the conditional probabilities of topics given documents of a 20-topic probabilistic latent semantic indexing (pLSI) model and an SVM trained on the output from a bigram model. 
+The classification accuracy under various size of training set are shown in Figure x.  
+
+#### Speed of the algorithm
+We compare the speed of our two implementations and pLSI. 
+
+- Scaling
+
+- Comparison
+
+Note that version 1 is way faster than version 2. This is mainly due to the fact that we avoided explicitly computing $\phi^*$ in version 1.  
 
 
-### Discussion
+### Conclusion & Discussion
 
-- Use MVN for flexible covariance structure of topics/words
-- application to classification
-- potential identifiability issues
+The LDA model is a general-purpose probabilistic model for text corpora. The only assumption it poses on the text corpora is infinite exchangeability of words and of topics, which is reasonable under most scenarios of discrete count data. Inference under LDA can be efficiently conducted with variational EM algorithm, and the variational parameters are interpretable and can be viewed as a low-dimensional characterization of the words.
+
+LDA can be easily applied to general high-dimensional discrete count data analysis. For example, it can be applied to 16S rRNA sequencing data and the "topics" represent the latent structures among the microbiome community. With a generative mechanism, LDA can be embedded into more sophisticated hierarchical models to account for the characteristics of certain datasets other than text corpora.  
+
+There are two potential directions of future work on LDA. First, the prior on $\beta$ could be modified to allow a more flexible covariance structure of words within topics than that induced by a Dirichlet prior. For example, a multivariate logistic-normal prior can be adopted on each row of $\beta$. Inference under this extension can be conducted with a Hamitonian Monte Carlo step embedded in the collapsed Gibbs sampler proposed in Griffiths and Steyvers (2004), which could be computational expensive. Second, uncertainty quantifications and convergence properties of LDA could be studied.
 
 
 

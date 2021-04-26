@@ -86,6 +86,7 @@ class LDA2(BaseLDA):
         phi1=np.zeros(shape=(len(wordid),k))
         gamma0=alpha+N/k
         for it in range(max_iter):
+            
             for j in range(len(wordid)):
                 # the jth row of phi1 corresponds to the word labelled as wordid[j]
                 for i in range(k):
@@ -134,6 +135,7 @@ class LDA2(BaseLDA):
         psi_sum_gamma=np.array(list(map(lambda x: psi(np.sum(x)),gamma_list))).reshape((M,1)) # M*1 
         psi_gamma=psi(np.array(gamma_list)) # M*k matrix
         for it in range(max_iter):
+            
             a0=np.log(alpha0)
             psi_sum_alpha=psi(np.sum(alpha0))
             poly_sum_alpha=polygamma(1,np.sum(alpha0))
@@ -143,7 +145,7 @@ class LDA2(BaseLDA):
             alpha1=np.exp(a1)
             ll1=utilities.loglik(alpha1,gamma_list,M,k)
             ll.append(ll1)
-            if np.abs(ll1-ll0)<conv_threshold:
+            if np.abs((ll1-ll0)/(1+abs(ll0)))<conv_threshold:
                 #print('newton finished at iteration',it)
                 conv=True
                 break
@@ -154,7 +156,7 @@ class LDA2(BaseLDA):
         if not conv:
             warn('Newton-Raphson has not converged. Try more iterations.')
         return (beta,alpha1,ll,alphalist)
-    def variational_em_all(self,Nd,alpha0,beta0,word_dicts,vocab,M,k, conv_threshold,max_iter,niter,m_func=m_step_exp):
+    def variational_em_all(self,Nd,alpha0,beta0,word_dicts,vocab,M,k, conv_threshold,max_iter,npass,m_func=m_step_exp):
         """
         Input:
         Nd: list of length of documents 
@@ -166,8 +168,8 @@ class LDA2(BaseLDA):
         k: number of topics
         """
         V=len(vocab)
-        for it in range(niter):
-            #print(it)
+        for it in range(npass):
+            #
             e_estimates=list(map(lambda x,y: self.e_step(x,k,V,alpha0,beta0,y,conv_threshold=conv_threshold,max_iter=max_iter), Nd,word_dicts))
             gamma_list=list(map(lambda x:x[0],e_estimates))
             suff_stat_list=list(map(lambda x:x[1],e_estimates))
@@ -180,7 +182,7 @@ class LDA2(BaseLDA):
             alpha0=alpha1.reshape(k)
             beta0=beta1
         return (alpha0,beta0,gamma_list,suff_stat_list)
-    def lda(self,num_topics,num_words=None,alpha0='rand_init',beta0='rand_init',conv_threshold=1e-3,max_iter=int(1e3),niter=int(1e3)):
+    def lda(self,num_topics,num_words=None,alpha0='rand_init',beta0='rand_init',conv_threshold=1e-3,max_iter=int(1e3),npass=int(1e3)):
         """Fit LDA to the corpus with given number of topics. Returns the words with highest probablity in each topic."""
         vocab=self.make_vocab_from_docs()
         word_dicts=list(map(lambda x: self.parse_doc(x,vocab),self.docs))
@@ -196,7 +198,7 @@ class LDA2(BaseLDA):
             #beta0=np.array([w[1] for w in pd]*k).reshape((k,V))
             beta0=np.random.random((k,V))
             beta0=beta0/np.sum(beta0,axis=1).reshape((-1,1))
-        vem=self.variational_em_all(Nd,alpha0,beta0,word_dicts,vocab,M,k, conv_threshold,max_iter,niter)
+        vem=self.variational_em_all(Nd,alpha0,beta0,word_dicts,vocab,M,k, conv_threshold,max_iter,npass)
         beta_post=vem[1]
         topics=[dict(zip(list(vocab.keys()),beta_post[i,:])) for i in range(k)]
         topics=[sorted(topic.items(),key=lambda x:x[1],reverse=True) for topic in topics]
