@@ -160,10 +160,12 @@ By observing the results above, we can see an significant advantage of LDA techn
 
 
 ### Comparative Analysis
-We conducted comparative analysis with competing methods to evaluate the performance of LDA in feature extraction for document classification as well as the speed of our two implementations of LDA.
+We conducted comparative analysis with competing methods to evaluate the performance of LDA in feature selection for document classification as well as the speed of our two implementations of LDA.
 #### Document classification
-We conducted a binary classification experiment using the Reuters-21578 dataset. We focused on a randomly sampled subset of this dataset with 1000 documents for illustration purpose. We estimated the $\gamma^*$ parameter of a 20-topic LDA model on the 1000 documents without reference to the true class label, and use $\gamma^*$ as the reduced feature set. We trained a support vector machine (SVM) for binary classification of the documents with these reduced features. We compare the classification accuracy with an SVM trained on the conditional probabilities of topics given documents of a 20-topic probabilistic latent semantic indexing (pLSI) model and an SVM trained on the output from a bigram model.
-The classification accuracy under various size of training set are shown in Figure x.  
+We conducted a binary classification experiment using the Reuters-21578 dataset. We focused on a randomly sampled subset of this dataset with 1000 documents for illustration purpose. We estimated the $\gamma^*$ parameter of a 20-topic LDA model on the 1000 documents without reference to the true class label, and use $\gamma^*$ as the reduced feature set. The two classes are EARN and not EARN. We trained a support vector machine (SVM) for binary classification of the documents with these reduced features. We compare the classification accuracy with an SVM trained on the conditional probabilities of topics given documents of a 5-topic probabilistic latent semantic indexing (pLSI) model and an SVM trained on the output from a bigram model.
+The classification accuracy under various size of training set are shown in Figure 3. There are a two interesting observations here. First, LDA1 is always one of the best two methods, and is only dominated by bigram. Noting that bigram provides very little dimensionality reduction while LDA and pLSI reduces the number of features to 5, LDA1 is the most efficient method in feature selection. Second, LDA1 outperforms LDA2 under all choices of proportions of training data. This suggests that the chunk-wise optimization steps used in LDA1 brings a significant improvement in convergence behaviours, hence provides better estimates of the parameters. 
+![image-20210420170137277](./figures/accuracy.png)
+Figure 3. Classification results on a binary classification problem from a subset of Reuters-21578 dataset for different proportions of training data. The error bars represent one standard deviation. 
 
 #### Speed of the algorithm
 We compare the speed of our two implementations and pLSI.
@@ -171,6 +173,8 @@ We compare the speed of our two implementations and pLSI.
 - Scaling
 
 - Comparison
+
+
 
 Note that version 1 is way faster than version 2. This is mainly due to the fact that we avoided explicitly computing $\phi^*$ in version 1.  
 
