@@ -150,14 +150,15 @@ The behaviour of the nopython compilation mode is to essentially compile the d
 
 We also got a message for the optimized implementation that states “an intermediate result being cached.” This phrase refers to the fact that computers are detecting when a location in memory is being accessed frequently, and making sure it is “cached” in higher-speed memory. Giving this statement, testing our implementation using the same input over and over again could result in a performance gain actually being the result of caching. The performance gain is not due to more efficient data structure. Thus, we avoided testing the same input over and over for the optimized part.
 
-Below is our final comparsion for the total run time of our LDA algorithm:
+Below is an example of the final comparsion for the total run time of our LDA algorithm:
 
 |           | total runtime (in s) |
 |-----------|----------------------|
-| plain     | 377.578              |
-| optimized | 271.575              |
+| plain     |            |
+| optimized |            |
 
-There is about 1.5 minute reduction in the runtime. 
+
+Using Numba, we are able to reduce the runtime by 1.5 minute. For future improvements, using methods like multithreads and GPU could potentially reduce the runtime further.
 
 ### Applications and Results
 
